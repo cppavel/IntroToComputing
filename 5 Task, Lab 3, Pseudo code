@@ -1,0 +1,50 @@
+using System;
+					
+public class Program
+{
+	public static void Main()
+	{
+		int [] test  = {0,0,0,0,012,0412,04,0102,0,0124,00,5555,5,5,5,5,5,89523859,9,9,9,0,0,0,0,0,0,0,0,0,0,0};
+		int temp;
+		for(int i =0;i<test.Length;i++)
+		{
+			for(int j = i+1;j<test.Length;j++)
+			{
+				if(test[i]<test[j])
+				{
+					temp = test[i];
+					test[i] = test[j];
+					test[j] = temp;
+				}
+			}
+		}
+		
+		int current_element = test[0];
+		int counter = 1 ;
+		int max_counter = -1;
+		for(int i = 0 ;i<test.Length;i++)
+		{
+			if(current_element == test[i])
+			{
+				counter++;	
+			}
+			else
+			{
+				if(max_counter<counter)
+				{
+					max_counter = counter;
+				}
+				counter=1;
+				current_element = test[i];
+			}
+		}
+		
+		foreach(int x in test)
+		{
+			Console.Write(x + " ");
+		}
+		
+		Console.WriteLine("\n"+max_counter);
+	}
+}
+					
