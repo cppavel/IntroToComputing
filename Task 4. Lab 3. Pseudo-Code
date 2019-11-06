@@ -1,0 +1,42 @@
+using System;
+					
+public class Program
+{
+	public static void Main()
+	{
+		char[] test_string  = "HELLO jjhiewjifif JERHE rw   jgfiejg ".ToCharArray();
+		char previous_char = test_string[0];
+		char current_char ; 
+		if(test_string[0]<='z'&&test_string[0]>='a')
+		{
+				test_string[0] = (char)(test_string[0] - 32);
+		}
+		
+		for(int i =1;i<test_string.Length;i++)
+		{
+			current_char = test_string[i];
+			
+			if(previous_char!=' ')
+			{
+				if(test_string[i]<='Z'&&test_string[i]>='A')
+				{
+					test_string[i] = (char)(test_string[i] + 32);
+				}
+			}
+			else if(current_char!=' ')
+			{
+				if(test_string[i]>='a'&&test_string[i]<='z')
+				{
+					test_string[i] = (char)(test_string[i] - 32);
+				}
+			}
+			
+			previous_char = current_char;
+		}
+		foreach(char x in test_string)
+		{
+			Console.Write(x);
+		}
+		
+	}
+}
