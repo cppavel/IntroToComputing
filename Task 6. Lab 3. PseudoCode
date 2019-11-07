@@ -1,0 +1,32 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Task6PseudoCode
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            List<int> A = new List<int>(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+            List<int> B = new List<int>(new int[] { 5, 6, 7, 8, 9, 10, 11,12, 13, 14, 15, 16 });
+            List<int> C = new List<int>();
+
+            for (int i = 0; i < A.Count; i++)
+            {
+                if (B.Contains(A[i]))
+                {
+                    C.Add(A[i]);
+                }
+            }
+
+            foreach (int x in C)
+            {
+                Console.Write(x + " ");
+            }
+            Console.ReadKey();
+
+        }
+    }
+}
