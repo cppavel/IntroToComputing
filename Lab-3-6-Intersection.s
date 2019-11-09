@@ -9,56 +9,55 @@
 	LDR	R0, =0x40000000	; address of sizeC
 	LDR	R1, =0x40000004	; address of elemsC
 	
-	LDR	R6, =sizeA	; address of sizeA
-	LDR	R2, [R6]	; load sizeA
-	LDR	R3, =elemsA	; address of elemsA
+	LDR R2, =sizeA
+	LDR R3, [R2]; R3 = sizeA
+	LDR R5, = 4;
+	MUL R5, R3, R5; 4*sizeA
+	LDR R4, =elemsA; R4 = start_pos_elem_A
+	ADD R4, R4, R5; R4 = end_pos_elem_A
 	
-	LDR	R6, =sizeB	; address of sizeB
-	LDR	R4, [R6]	; load sizeB
-	LDR	R5, =elemsB	; address of elemsB
-
-	;R7 -elemA
-	;R8 -elemB
-	;R9 -finaladdressofA
-	;R10 - finaladdressofB
-	;R11 -size of C
-	LDR R7, = 4 
-	MUL R9, R7, R2 ; 4*sizeA
-	ADD R9, R9, R3 ; finaladdressofA = address of elemsA + 4*sizeA
-	MUL R10, R7, R4; 4*sizeB
-	ADD R10, R10, R5; finaladressofB = address of elemsB + 4*sizeB
-	LDR R11, = 0; size C = 0;
+	LDR R2, =sizeB
+	LDR R3, [R2]; R3 = sizeB
+	LDR R6, = 4
+	MUL R6, R3, R6 ;4*sizeB
+	LDR R5, = elemsB; R5 = start_pos_elem_B
+	ADD R5, R6, R5; R5 = end_pos_elem_B
+	
+	LDR R2, = elemsA; R2 = start_pos_elem_A
+	LDR R3, = elemsB; R3 = start_pos_elem_B
+	
+	LDR R6, = 0; sizeC = 0
+	
 while1
-	CMP R3, R9
+	CMP R2, R4
 	BHS endwhile1
-	LDR R7, [R3] ; load current elem of A
+	LDR R7, [R2] ; loading_current_element
 while2
-	CMP R5, R10
+	CMP R3, R5
 	BHS endwhile2
-	LDR R8, [R5]; load current elem of B
-	CMP R8, R7
-	BNE notcontained
-	ADD R11, R11, #1; size = size + 1 
-	STR R7, [R1]; 
-	ADD R1, R1, #4; move address of elem C
+	LDR R8, [R3]; loading element for comparison
+	CMP R7, R8
+	BNE notequal
+	ADD R6, R6, #1; sizeC = sizeC + 1
+	STR R7, [R1]; loading current element into C
+	ADD R1, R1, #4; moving address of C
 	B endwhile2
-notcontained
-	ADD R5, R5, #4 ; move address of elem B
+notequal
+	ADD R3, R3, #4; moving address forward
 	B while2
 endwhile2
-	LDR R5, =elemsB
-	ADD R3, R3, #4; move address of elem A
+	LDR R3, = elemsB ;initialising R3 with start address of elemB
+	ADD R2, R2, #4; moving address forward
 	B while1
 endwhile1
-
-	STR R11, [R0]; load size into memory
+	STR R6, [R0]; storing sizeC
 	
 STOP	B	STOP
 
-sizeA	DCD	6
-elemsA	DCD	7, 14, 6, 3,898989898, 17
+sizeA	DCD	7
+elemsA	DCD	7, 14, 6, 3,898989898, 17,81
 
-sizeB	DCD	10
-elemsB	DCD	20, 11, 14, 5, 17, 2, 9, 12, 7,898989898
+sizeB	DCD	11
+elemsB	DCD	81, 20, 11, 14, 5, 17, 2, 9, 12, 7,898989898
 
 	END
