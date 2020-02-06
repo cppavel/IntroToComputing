@@ -31,28 +31,27 @@ L2
 	LDR	R0, =ARRAY
 	LDR	R1, =0 ;old index
 	LDR	R2, =15 ;new index
-	LDR	R3, =N
 	
-	CMP R2, R1
-	BLO less
+	CMP R2, R1; if(new_index>=old_index)
+	BLO less	
 	LDR R3, [R0, R1, LSL#2]; loading old val 
 	ADD R1, R1, #1; incrementing old index
-for
+for           ;for(int i = old_index; i <=new_index; i++)
 	CMP R1, R2
 	BGT endfor
 	LDR R4, [R0,R1,LSL#2]; loading current value
-	SUB R1, R1, #1; subtracting one from the adress
+	SUB R1, R1, #1; subtracting one from the address
 	STR R4, [R0, R1, LSL#2]; storing it back to a lower index
 	ADD R1, R1, #2; incrementing the value by two
 	B for
 endfor
 	STR R3, [R0, R2, LSL#2]; storing the old value to a new index
 	B STOP
-less
+less		;else [new_index<old_index]
 	LDR R3, [R0, R1, LSL#2]; 
 	SUB R1, R1, #1; decrementing old index
 
-for1
+for1		 ;for(int i = old_index; i >=new_index; i--)
 	CMP R1, R2
 	BLT endfor1
 	LDR R4, [R0,R1,LSL#2]
@@ -62,8 +61,6 @@ for1
 	B for1
 endfor1
 	STR R3, [R0, R2, LSL#2]; storing the old value to a new index
-	; your program goes here
-
 STOP	B	STOP
 
 	END
