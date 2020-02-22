@@ -1,5 +1,6 @@
 ﻿using System;
 
+
 namespace SubArrayPseudoCode
 {
     class Program
@@ -21,7 +22,7 @@ namespace SubArrayPseudoCode
         {
             int[,] A = new int[,] { { 48,37,15,44,3,17,26},{ 2, 9, 12, 18, 14, 33, 16 },{ 13, 20, 1, 22, 7, 48, 21 },{ 27, 19, 44, 49, 44, 18, 10 },
             {29,17,22,4,46,43,41 },{37,35,38,34,16,25,0 },{17,0,48,15,27,35,11 } };
-            int[,] B = new int[,] { { 17,0,48} };
+            int[,] B = new int[,] { { 29, 17, 22 }, { 37, 35, 38 } };
 
             printMatrix(A);
             printMatrix(B);
@@ -58,6 +59,10 @@ namespace SubArrayPseudoCode
                 {
                     counter_w++;
                     line_done = false;
+                }
+                else
+                {
+                    counter_w = 0;
                 }
                 if (counter_w == w_sub)
                 {
