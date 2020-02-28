@@ -4,7 +4,7 @@
 ;
 
 N	EQU	7
-M	EQU	3		
+M	EQU	3
 
 	AREA	RESET, CODE, READONLY
 	ENTRY
@@ -17,65 +17,66 @@ M	EQU	3
 	;R2 - current address
 	;R3 - counter_w
 	;R4 - counter_h
-	;R5 - boolean line_checked
 	;R6 - address
 	;R7 - element small A
 	;R8 - element large A
 	;R9 - index i
 	;R10 - index j
-	MOV R0, #0
-	LDR R1, = M
-	LDR R2, = N
-	MOV R3, #0
-	MOV R4, #0
-	MOV R5, #0
-	
-for1
-	CMP R9, #N
-	BEQ endfor1
-	MOV R10, #0
-for2
-	CMP R10, #N
-	BEQ endfor2
-	LDR R1, = N
-	LDR R2, = LARGE_A
-	MUL R6, R9, R1
-	ADD R6, R6, R10
-	LDR R8, [R2, R6, LSL #2]
+	MOV R0, #0 									; isSubmatrix = false;
+	MOV R3, #0 									; w_cur = 0;
+	MOV R4, #0 									; h_cur = 0;
+	MOV R9, #0									; i = 0;
+for1											; for(i =0 ;i <= N - M; i++)
+	CMP R9, #(N-M)								; {
+	BGT endfor1									;		j = 0;
+	MOV R10, #0									; 		for(j = 0; j<= N - M;j++)
+for2											;		{
+	CMP R10, #(N-M)								;			w_cur = 0;
+	BGT endfor2									;			h_cur = 0;
+												;			while(w_cur<M&&small[w_cur,h_cur]==big[i + w_cur, j + h_cur])
+	MOV R3, #0									;			{
+	MOV R4, #0 									;				h_cur++;
+while											;				if(h_cur==M)
+	CMP R3, #M									;				{
+	BEQ endwhile								;					h_cur = 0;
+												;					w_cur++;
+	LDR R1, = N									;				}										
+	LDR R2, = LARGE_A							;				if(w_cur == M)
+	MOV R6, R9									;				{	
+	ADD R6, R6, R3								;					isSubmatrix = true;	
+	MUL R6, R1, R6								;					return
+	ADD R6, R6, R10								;				}
+	ADD R6, R6, R4								;			}
+	LDR R8, [R2, R6, LSL #2]					;		}
+												; }
+
 	LDR R1, = M
 	LDR R2, = SMALL_A
 	MUL R6, R3, R1
 	ADD R6, R6, R4
-	LDR R7, [R2, R6, LSL #2]	
+	LDR R7, [R2, R6, LSL #2]
+	
 	CMP R7, R8
-	BNE elseif1
+	BNE endwhile
+	
 	ADD R4, R4, #1
-	B endif1
-elseif1
+	
+	CMP R4, #M
+	BNE notif
 	MOV R4, #0
-endif1
-	CMP R4, R1
-	BNE notif2
-	MOV R4, #0
-	MOV R5, #1
-	B endfor2
-notif2
+	ADD R3, R3, #1
+notif
+	CMP R3, #M
+	BNE notif1
+	MOV R0, #1
+	B STOP
+notif1
+	B while
+endwhile
+
 	ADD R10, R10, #1
 	B for2
 endfor2
-	CMP R5, #1
-	BNE notif3
-	ADD R3, R3, #1
-	MOV R5, #0
-	B endif3
-notif3
-	MOV R3, #1
-endif3
-	CMP R3, R1
-	BNE notif4
-	MOV R0, #1
-	B STOP
-notif4
 	ADD R9, R9, #1
 	B for1
 endfor1
