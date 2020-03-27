@@ -9,8 +9,8 @@
 ;
 ; Test Data
 ;
-FP_A	EQU	0xc37a0000
-FP_B	EQU	0x437a0000
+FP_A	EQU 0x493fcf65
+FP_B	EQU 0x493fcf65
 
 
 	; initialize system stack pointer (SP)
@@ -36,7 +36,6 @@ stop	B	stop
 ;return
 ;	r0 - sum of the values returned as an IEEE 754 floating point value
 
-;special cases: 20.5-20.5, 12412521512-0.421044242 all considering errors
 
 fpadd
 	PUSH{lr, R4-R10}
@@ -70,16 +69,37 @@ fpadd
 	CMP R5, R7 				;if(exponent_1 < exponent_2)
 	BGE add_notif1
 	SUB R8, R7, R5			;calculating the offset
-	MOV R4, R4, ASR R8		;shifting the smaller value accordingly
+	CMP R4, #0				;if(fraction_1<0)
+	BGE add_positive2
+	NEG R4, R4				;fraction = - fraction
+	MOV R4, R4, LSR R8		;moving the fraction accordingly
+	NEG R4, R4				;getting the fraction back to negative
+	B add_endpositive2
+add_positive2
+	MOV R4, R4, LSR R8		;moving the fraction accordingly
+add_endpositive2
 	MOV R9, R7 				;saving the larger exponent
 	B add_endif1
 add_notif1
 	SUB R8, R5, R7			;calculating the offset
-	MOV R6, R6, ASR R8 		;shifting the smaller value accordingly
+	CMP R6, #0				;if(fraction_1<0)
+	BGE add_positive3
+	NEG R6, R6				;fraction = - fraction
+	MOV R6, R6, LSR R8		;moving the fraction accordingly
+	NEG R6, R6				;getting the fraction back to negative
+	B add_endpositive3
+add_positive3
+	MOV R6, R6, LSR R8		;moving the fraction accordingly
+add_endpositive3			;shifting the smaller value accordingly
 	MOV R9, R5				;saving the larger exponent
 add_endif1
 
 	ADD R8, R4, R6			;adding the fractions	
+	CMP R8, #0				;if(result == 0)
+	BNE add_not_zero	
+	LDR R8, =0x00800000		;setting the fraction to zero representation
+	LDR R9, =-127			;setting the exponent to be 	
+add_not_zero
 	LDR R5, =0x80000000 	;mask for finding the leading one
 	LDR R6, = 31			;leading one position
 	MOV R4, #0				;sign flag = 0
